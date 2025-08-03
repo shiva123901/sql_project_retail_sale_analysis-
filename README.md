@@ -5,29 +5,20 @@ Beginner-level SQL project to demonstrate data exploration, cleaning, and busine
 
 📌 Project Overview
 Project Title: Retail Sales Analysis
-
 Level: Beginner
-
 Database: p1_retail_db
-
 This project showcases practical SQL skills applied to a real-world retail sales dataset. It involves creating a structured sales database, cleaning raw data, performing exploratory data analysis (EDA), and answering business questions using SQL queries.
 
 It is ideal for anyone starting their data analytics journey and looking to build a strong foundation in SQL with PostgreSQL-style syntax.
 
 🎯 Objectives
 🧱 Set up a sales database
-
 🧹 Clean raw data (remove NULLs, validate types)
-
 🔍 Explore sales patterns and customer behavior
-
 📊 Answer 10+ key business questions with SQL
 
 📁 Project Structure
 1. 🧱 Database Setup
-sql
-Copy
-Edit
 CREATE DATABASE p1_retail_db;
 
 CREATE TABLE retail_sales (
@@ -43,6 +34,8 @@ CREATE TABLE retail_sales (
   cogs FLOAT,
   total_sale FLOAT
 );
+
+
 2. 🧹 Data Exploration & Cleaning
 📌 Key Queries:
 sql
@@ -68,6 +61,7 @@ DELETE FROM retail_sales
 WHERE sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
       gender IS NULL OR age IS NULL OR category IS NULL OR 
       quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+      
 3. 📊 Business Questions & Queries
 🔎 Q1. Sales made on '2022-11-05'
 sql
