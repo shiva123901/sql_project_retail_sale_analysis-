@@ -1,24 +1,36 @@
-# sql_project_retail_sale_analysis-
-🛒 Retail Sales Analysis SQL Project
-👨‍💻 Author: Shiva Seth
-Beginner-level SQL project to demonstrate data exploration, cleaning, and business insight extraction using SQL.
+# 🛒 Retail Sales Analysis using SQL
 
-📌 Project Overview
-Project Title: Retail Sales Analysis
-Level: Beginner
-Database: p1_retail_db
-This project showcases practical SQL skills applied to a real-world retail sales dataset. It involves creating a structured sales database, cleaning raw data, performing exploratory data analysis (EDA), and answering business questions using SQL queries.
+A beginner-friendly SQL project to explore, clean, and analyze retail transaction data. The goal is to extract meaningful insights through structured queries and build a solid foundation in SQL for data analytics.
 
-It is ideal for anyone starting their data analytics journey and looking to build a strong foundation in SQL with PostgreSQL-style syntax.
+---
 
-🎯 Objectives
-🧱 Set up a sales database
-🧹 Clean raw data (remove NULLs, validate types)
-🔍 Explore sales patterns and customer behavior
-📊 Answer 10+ key business questions with SQL
+## 📚 Project Summary
 
-📁 Project Structure
-1. 🧱 Database Setup
+- **Project Title:** Retail Sales Analysis  
+- **Level:** Beginner  
+- **Tools:** PostgreSQL (or any SQL-compatible DBMS)  
+- **Database:** `p1_retail_db`  
+- **Table Used:** `retail_sales`  
+- **Focus:** Data Cleaning, EDA, and Business-Oriented SQL Queries
+
+---
+
+## 🎯 Skills Demonstrated
+
+- SQL database design & schema creation  
+- Data cleaning (`NULL` handling, record validation)  
+- Exploratory Data Analysis (EDA)  
+- Business queries (GROUP BY, CASE, RANK, etc.)  
+- Time-based analysis (monthly trends, hourly shifts)  
+- Use of window functions (`RANK()`, `AVG()`, etc.)
+
+---
+
+## 🗂️ Project Structure
+
+### 1. Database Setup
+
+```sql
 CREATE DATABASE p1_retail_db;
 
 CREATE TABLE retail_sales (
@@ -34,107 +46,108 @@ CREATE TABLE retail_sales (
   cogs FLOAT,
   total_sale FLOAT
 );
+```
 
+### 2. Data Cleaning & Validation
 
-2. 🧹 Data Exploration & Cleaning
-📌 Key Queries:
-sql
-Copy
-Edit
--- Total records
-SELECT COUNT(*) FROM retail_sales;
-
--- Unique customers
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-
--- Unique categories
-SELECT DISTINCT category FROM retail_sales;
-
--- Identify NULLs
-SELECT * FROM retail_sales
-WHERE sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-      gender IS NULL OR age IS NULL OR category IS NULL OR 
-      quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
--- Delete NULL records
+```sql
 DELETE FROM retail_sales
-WHERE sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-      gender IS NULL OR age IS NULL OR category IS NULL OR 
-      quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-      
-3. 📊 Business Questions & Queries
-🔎 Q1. Sales made on '2022-11-05'
-sql
-Copy
-Edit
-SELECT * FROM retail_sales WHERE sale_date = '2022-11-05';
-🔎 Q2. Clothing sales (quantity > 4) in November 2022
-sql
-Copy
-Edit
-SELECT * FROM retail_sales
+WHERE sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL
+  OR gender IS NULL OR age IS NULL OR category IS NULL
+  OR quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+```
+
+---
+
+## 📊 Business Questions & SQL Queries
+
+### Q1. Retrieve all sales made on `'2022-11-05'`
+```sql
+SELECT *
+FROM retail_sales
+WHERE sale_date = '2022-11-05';
+```
+
+### Q2. Clothing transactions where quantity > 4 during Nov 2022
+```sql
+SELECT *
+FROM retail_sales
 WHERE category = 'Clothing'
   AND TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
   AND quantity >= 4;
-🔎 Q3. Total sales and orders per category
-sql
-Copy
-Edit
-SELECT category, SUM(total_sale) AS net_sale, COUNT(*) AS total_orders
-FROM retail_sales GROUP BY category;
-🔎 Q4. Average age of customers who bought Beauty products
-sql
-Copy
-Edit
+```
+
+### Q3. Total sales and order count for each category
+```sql
+SELECT 
+    category,
+    SUM(total_sale) AS net_sale,
+    COUNT(*) AS total_orders
+FROM retail_sales
+GROUP BY category;
+```
+
+### Q4. Average age of customers who bought from 'Beauty' category
+```sql
 SELECT ROUND(AVG(age), 2) AS avg_age
 FROM retail_sales
 WHERE category = 'Beauty';
-🔎 Q5. High-value transactions (sales > 1000)
-sql
-Copy
-Edit
-SELECT * FROM retail_sales WHERE total_sale > 1000;
-🔎 Q6. Transaction count by gender and category
-sql
-Copy
-Edit
-SELECT category, gender, COUNT(*) AS total_trans
+```
+
+### Q5. Transactions where total_sale > 1000
+```sql
+SELECT *
 FROM retail_sales
-GROUP BY category, gender;
-🔎 Q7. Best selling month (highest avg sale) each year
-sql
-Copy
-Edit
+WHERE total_sale > 1000;
+```
+
+### Q6. Total number of transactions by gender and category
+```sql
+SELECT 
+    category,
+    gender,
+    COUNT(*) AS total_trans
+FROM retail_sales
+GROUP BY category, gender
+ORDER BY category;
+```
+
+### Q7. Average monthly sale and best-selling month per year
+```sql
 SELECT year, month, avg_sale
 FROM (
-  SELECT EXTRACT(YEAR FROM sale_date) AS year,
-         EXTRACT(MONTH FROM sale_date) AS month,
-         AVG(total_sale) AS avg_sale,
-         RANK() OVER (PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) AS rank
+  SELECT 
+    EXTRACT(YEAR FROM sale_date) AS year,
+    EXTRACT(MONTH FROM sale_date) AS month,
+    AVG(total_sale) AS avg_sale,
+    RANK() OVER (
+      PARTITION BY EXTRACT(YEAR FROM sale_date)
+      ORDER BY AVG(total_sale) DESC
+    ) AS rank
   FROM retail_sales
   GROUP BY 1, 2
 ) AS t1
 WHERE rank = 1;
-🔎 Q8. Top 5 customers by total sales
-sql
-Copy
-Edit
+```
+
+### Q8. Top 5 customers by total sales
+```sql
 SELECT customer_id, SUM(total_sale) AS total_sales
 FROM retail_sales
 GROUP BY customer_id
 ORDER BY total_sales DESC
 LIMIT 5;
-🔎 Q9. Unique customers per category
-sql
-Copy
-Edit
+```
+
+### Q9. Number of unique customers per category
+```sql
 SELECT category, COUNT(DISTINCT customer_id) AS cnt_unique_cs
 FROM retail_sales
 GROUP BY category;
-🔎 Q10. Orders by time shift (Morning, Afternoon, Evening)
-sql
-Copy
-Edit
+```
+
+### Q10. Shift-wise order counts (Morning, Afternoon, Evening)
+```sql
 WITH hourly_sale AS (
   SELECT *,
     CASE
@@ -147,45 +160,29 @@ WITH hourly_sale AS (
 SELECT shift, COUNT(*) AS total_orders
 FROM hourly_sale
 GROUP BY shift;
-Insights & Takeaways
-1.High-value orders (₹1000+) show premium purchase behavior
+```
 
-2.Clothing and Beauty are among the most active categories
+---
 
-3.Sales are seasonal, with clear best-performing months
+## 📈 Key Insights
 
-4.Morning & Evening shifts dominate in order volume
+- High-value transactions identified with `total_sale > 1000`
+- Best-selling categories include Clothing and Beauty
+- Seasonal spikes in sales across specific months
+- Mornings and evenings show higher order volumes
+- Top 5 customers contribute significantly to overall revenue
 
-5.Top 5 customers account for a significant portion of revenue.
+---
 
-6.Sales shifts: Morning and Evening tend to show more activity than Afternoon.
+## 🚀 How to Run This Project
 
-🧾 Reports Generated
-1.📌 Sales Summary Report
+1. Clone this repo  
+2. Import the SQL script into your PostgreSQL or MySQL database  
+3. Run queries in a SQL editor (e.g., DBeaver, pgAdmin)  
+4. Modify or extend queries for deeper insights
 
-2.📈 Trend Analysis by Month & Shift
+---
 
-3.🧍 Customer Insights: Top buyers and engagement by category
+## 👤 Author: **Shiva Seth**
 
-✅ How to Use
-1.Clone this repository
-
-2.Import the SQL script into your PostgreSQL or MySQL environment
-
-3.Run queries from the README or provided SQL files
-
-4.Experiment and extend with your own custom analysis
-
-👤 Author: Shiva Seth
-This project is part of my data analytics portfolio, demonstrating essential SQL techniques for real-world business analysis. I'm passionate about clean data, smart queries, and building solid foundations in analytics.
-
-
-
-
-
-
-
-
-
-
-
+This project is part of my data analytics portfolio, showcasing real-world SQL skills through exploratory and business-oriented queries.
